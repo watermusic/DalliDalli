@@ -1,0 +1,102 @@
+figure, figcaption {
+    display: block;
+}
+.polaroid{
+    width:720px;
+    overflow:hidden;
+    padding:20px 10px;
+    margin: 0 auto;
+}
+.polaroid figure{
+    float:left;
+    position:relative;
+    width:300px;
+    margin:10px 20px;
+    padding: 6px 8px 10px 8px;
+    -webkit-box-shadow: 4px 4px 8px -4px rgba(0, 0, 0, .75);
+    -moz-box-shadow: 4px 4px 8px -4px rgba(0, 0, 0, .75);
+    box-shadow: 4px 4px 8px -4px rgba(0, 0, 0, .75);
+    background: #eee6d8;
+    background: -webkit-linear-gradient(top, #ede1c9, #fef8e2 20%, #f2ebde 60%);
+    background: -moz-linear-gradient(top, #ede1c9, #fef8e2 20%, #f2ebde 60%);
+    background: -o-linear-gradient(top, #ede1c9, #fef8e2 20%, #f2ebde 60%);
+    background: -ms-linear-gradient(top, #ede1c9, #fef8e2 20%, #f2ebde 60%);
+    background: linear-gradient(top, #ede1c9, #fef8e2 20%, #f2ebde 60%);
+    -webkit-transform:rotate(-1deg);
+    -moz-transform: rotate(-1deg);
+    -o-transform: rotate(-1deg);
+    -ms-transform: rotate(-1deg);
+    transform: rotate(-1deg);
+    -webkit-backface-visibility:hidden; /*prevent rotated text being jagged in Chrome and Safari*/
+}
+.polaroid figure:nth-child(even) {
+    -webkit-transform:rotate(2deg);
+    -moz-transform: rotate(2deg);
+    -o-transform: rotate(2deg);
+    -ms-transform: rotate(2deg);
+    transform: rotate(2deg);
+    -webkit-backface-visibility:hidden; /*prevent rotated text being jagged in Chrome and Safari*/
+    -webkit-box-shadow: 4px 4px 8px -4px rgba(0, 0, 0, .75);
+    -moz-box-shadow: 4px 4px 8px -4px rgba(0, 0, 0, .75);
+    box-shadow: -4px 4px 8px -4px rgba(0, 0, 0, .75);
+}
+.polaroid figure:before {
+    content: '';
+    display: block;
+    position: absolute;
+    left:5px;
+    top: -15px;
+    width: 75px;
+    height: 25px;
+    background-color: rgba(222,220,198,0.7);
+    -webkit-transform: rotate(-12deg);
+    -moz-transform: rotate(-12deg);
+    -o-transform: rotate(-12deg);
+    -ms-transform: rotate(-12deg);
+}
+.polaroid figure:nth-child(even):before {
+    left:150px;
+    top: -15px;
+    width: 55px;
+    height: 25px;
+    -webkit-transform: rotate(12deg);
+    -moz-transform: rotate(12deg);
+    -o-transform: rotate(12deg);
+    -ms-transform: rotate(12deg);
+}
+.polaroid figcaption{
+    text-align:center;
+    font-size:0.3em;
+    color:#454f40;
+    letter-spacing:0.09em;
+}
+/**IE Hacks - see http://css3pie.com/ for more info on how to use CS3Pie and to download the latest version**/
+.polaroid figure{
+    -pie-background: linear-gradient(#ede1c9, #fef8e2 20%, #f2ebde 60%);
+    behavior: url(PIE.htc);
+    position:relative; /*required to make PIE work*/
+    padding-top:10px\9;
+    padding-right:10px\9;
+}
+
+.reveal table td {
+    text-align: center;
+}
+
+.reveal thead td {
+    font-size: 0.3em;
+}
+
+.reveal tbody td {
+    font-size: 4.0em;
+}
+
+.score {
+    width: 620px;
+    margin: 0 auto;
+}
+
+.score table {
+    width: 620px;
+    margin: 0 auto;
+}
