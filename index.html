@@ -45,6 +45,7 @@
     <div class="slides">
 
         <section data-background="#ff0000">
+            <a id="s_klick">sound</a>
         </section>
 
         <section data-background="#ff0000">
@@ -310,13 +311,10 @@
 <div id="alarm">
     <div id="holder"></div>
     <span id="s"></span>
-    <audio id="alarm-ring" preload>
-        <source src="lib/audio/ticktac.mp3" type="audio/mpge"/>
-        <source src="lib/audio/ticktac.ogg" type="audio/ogg"/>
-    </audio>
 </div>
 
 <script src="lib/js/jquery-1.11.1.min.js"></script>
+<script src="lib/js/soundmanager2-jsmin.js"></script>
 <script src="lib/js/moment.min.js"></script>
 <script src="lib/js/countdown.min.js"></script>
 <script src="lib/js/raphael-min.js"></script>
@@ -364,10 +362,30 @@
         ]
     });
 
-    var timer = null, indices = {};
+    var timer = null, indices = {}, snd_ticktac, snd_ticktac;
+
+    soundManager.setup({
+
+        onready: function() {
+            snd_ticktac = soundManager.createSound({
+                url: 'lib/audio/ticktac.ogg'
+            });
+            snd_theme = soundManager.createSound({
+                url: 'lib/audio/theme.m4a'
+            });
+        }
+
+    });
+
+
+    $("#s_klick").click(function() {
+        snd_theme.play();
+    });
 
     $(function () {
 //        timer = $("#holder").tzineClock();
+
+
     });
 
     Reveal.addEventListener('slidechanged', function (event) {
