@@ -1,13 +1,13 @@
 figure, figcaption {
     display: block;
 }
-.polaroid{
+#polaroid{
     width:720px;
     overflow:hidden;
     padding:20px 10px;
     margin: 0 auto;
 }
-.polaroid figure{
+#polaroid figure{
     float:left;
     position:relative;
     width:300px;
@@ -29,7 +29,7 @@ figure, figcaption {
     transform: rotate(-1deg);
     -webkit-backface-visibility:hidden; /*prevent rotated text being jagged in Chrome and Safari*/
 }
-.polaroid figure:nth-child(even) {
+#polaroid figure:nth-child(even) {
     -webkit-transform:rotate(2deg);
     -moz-transform: rotate(2deg);
     -o-transform: rotate(2deg);
@@ -40,7 +40,7 @@ figure, figcaption {
     -moz-box-shadow: 4px 4px 8px -4px rgba(0, 0, 0, .75);
     box-shadow: -4px 4px 8px -4px rgba(0, 0, 0, .75);
 }
-.polaroid figure:before {
+#polaroid figure:before {
     content: '';
     display: block;
     position: absolute;
@@ -54,7 +54,7 @@ figure, figcaption {
     -o-transform: rotate(-12deg);
     -ms-transform: rotate(-12deg);
 }
-.polaroid figure:nth-child(even):before {
+#polaroid figure:nth-child(even):before {
     left:150px;
     top: -15px;
     width: 55px;
@@ -64,14 +64,14 @@ figure, figcaption {
     -o-transform: rotate(12deg);
     -ms-transform: rotate(12deg);
 }
-.polaroid figcaption{
+#polaroid figcaption{
     text-align:center;
     font-size:0.3em;
     color:#454f40;
     letter-spacing:0.09em;
 }
 /**IE Hacks - see http://css3pie.com/ for more info on how to use CS3Pie and to download the latest version**/
-.polaroid figure{
+#polaroid figure{
     -pie-background: linear-gradient(#ede1c9, #fef8e2 20%, #f2ebde 60%);
     behavior: url(PIE.htc);
     position:relative; /*required to make PIE work*/
