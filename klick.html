@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" manifest="/offline.appcache">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>dalli-klick</title>
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/main.css" rel="stylesheet">
+  </head>
+  <body>
+    <div id="container" class="container">
+      <div id="header" class="page-header">
+        <h1>Dalli-Klick Spiel <small>für das Geburtstags-Fest unserer Eltern</small></h1>
+      </div>
+      <div id="upload_message" class="alert alert-success hidden"></div>
+      <div id="jumbotron" class="jumbotron">
+        <span id="step-1">
+        <div id="holder"></div>
+        <p id="status" class="hidden"><small>File API & FileReader API not supported</small></p>
+        <p><span class="label label-primary">Schritt 1</span> Wähle deine Bilder aus. (Drag & Drop)</p>
+        </span>
+        <span id="step-2" class="hidden">
+        <p><span class="label label-primary">Schritt 2</span> In wie viele Teile soll das Bild unterteilt sein.</p>
+        <form role="form" id="settingsform">
+          <div class="form-group">
+            <label for="numberOfParts">Anzahl der Teile</label>
+            <input type="range" class="form-control" id="numberOfParts" min="10" max="100" value="15">
+            <output name="numberOfPartsOutput" id="numberOfPartsOutput">15</output>
+          </div>
+          <button type="submit" class="btn btn-success" id="start-button">Spiel starten</button>
+        </form>
+        </span>
+      </div>
+      <div id="game" class="game">
+        <img id="game-image" class="game-image">
+        <canvas id="game-canvas" class="game-canvas hidden"></canvas>
+      </div>
+    </div>
+    <script src="vendor/bootstrap-without-jquery.min.js"></script>
+    <script src="vendor/rhill-voronoi-core.min.js"></script>
+    <script src="vendor/close-pixelate.js"></script>
+    <script src="vendor/underscore-min.js"></script>
+    <script src="main.js"></script>
+    <script src="voronoi.js"></script>
+  </body>
+</html>
