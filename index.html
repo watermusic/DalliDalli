@@ -121,7 +121,7 @@
                 <blockquote>
                     Was wärt ihr als Kind gerne geworden?
                 </blockquote>
-                <a href="">start</a>
+                <a href="javascript:PP.Timer.start(45);">start</a>
             </section>
 
             <section>
@@ -133,7 +133,7 @@
                 <blockquote>
                     Was sind die Vorzüge einer Ehe?
                 </blockquote>
-                <a href="">start</a>
+                <a href="javascript:PP.Timer.start(45);">start</a>
             </section>
 
             <section>
@@ -145,7 +145,7 @@
                 <blockquote>
                     Was gefällt euch an einem Mann am meisten?
                 </blockquote>
-                <a href="">start</a>
+                <a href="javascript:PP.Timer.start(45);">start</a>
             </section>
 
             <section>
@@ -157,7 +157,7 @@
                 <blockquote>
                     Was packt ihr in euren Urlaubskoffer?
                 </blockquote>
-                <a href="">start</a>
+                <a href="javascript:PP.Timer.start(45);">start</a>
             </section>
 
         </section>
@@ -205,7 +205,7 @@
             <section>
                 <h2>Team Angelika</h2>
                 <p>&nbsp;</p>
-                <a href="">start</a>
+                <a href="javascript:PP.Timer.start(45);">start</a>
             </section>
 
             <section>
@@ -217,7 +217,7 @@
             <section>
                 <h2>Team Helmut</h2>
                 <p>&nbsp;</p>
-                <a href="">start</a>
+                <a href="javascript:PP.Timer.start(45);">start</a>
             </section>
 
             <section>
@@ -246,7 +246,7 @@
             <section>
                 <h2>Team Helmut</h2>
                 <p>erste Runde</p>
-                <a href="">start</a>
+                <a href="javascript:PP.Timer.start(45);">start</a>
             </section>
 
             <section>
@@ -260,7 +260,7 @@
             <section>
                 <h2>Team Angelika</h2>
                 <p>erste Runde</p>
-                <a href="">start</a>
+                <a href="javascript:PP.Timer.start(45);">start</a>
             </section>
 
             <section>
@@ -273,7 +273,7 @@
             <section>
                 <h2>Team Helmut</h2>
                 <p>zweite Runde</p>
-                <a href="">start</a>
+                <a href="javascript:PP.Timer.start(45);">start</a>
             </section>
 
             <section>
@@ -286,7 +286,7 @@
             <section>
                 <h2>Team Angelika</h2>
                 <p>zweite Runde</p>
-                <a href="">start</a>
+                <a href="javascript:PP.Timer.start(45);">start</a>
             </section>
 
             <section>
@@ -309,8 +309,9 @@
 </div>
 
 <div id="alarm">
-    <div id="holder"></div>
-    <span id="s"></span>
+    <div id="holder">
+        <span id="s"></span>
+    </div>
 </div>
 
 <script src="lib/js/jquery-1.11.1.min.js"></script>
@@ -362,7 +363,7 @@
         ]
     });
 
-    var timer = null, indices = {}, snd_ticktac, snd_ticktac;
+    var timer = null, indices = {}, snd_ticktac = null, snd_theme = null;
 
     soundManager.setup({
 
@@ -383,8 +384,10 @@
     });
 
     $(function () {
-//        timer = $("#holder").tzineClock();
 
+        $("#s").on("click", function() {
+            PP.Timer.stop();
+        });
 
     });
 

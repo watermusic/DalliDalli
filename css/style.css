@@ -1,12 +1,30 @@
 #alarm {
-    margin:40px auto;
-    height:200px;
-    border:1px solid #111111;
-    width:200px;
+    margin:0 auto;
     position: absolute;
-    left: 200px;
-    top:20px;
+    left: 0;
+    top:0;
     display: none;
+    width: 100%;
+    height: 100%;
+    /*background-color: #3b5998;*/
+    z-index: 1;
+}
+
+#holder {
+    margin: -50px -40px;
+    width: 600px;
+    position: relative;
+}
+
+#alarm span {
+    font-family: "Lato", sans-serif;
+    font-size: 200px;
+    font-weight: normal;
+    letter-spacing: -0.02em;
+    color: #eeeeee;
+    position: absolute;
+    left: 184px;
+    top: 190px;
 }
 
 .clock{
