@@ -44,11 +44,11 @@
     <!-- Any section element inside of this container is displayed as a slide -->
     <div class="slides">
 
-        <section data-background="#ff0000">
+        <section>
             <a id="s_klick">sound</a>
         </section>
 
-        <section data-background="#ff0000">
+        <section>
 
             <!--<audio data-autoplay src="lib/audio/theme.m4a"></audio>-->
 
@@ -171,6 +171,7 @@
             <section>
                 <h3>Beispiel</h3>
                 <p>&nbsp;</p>
+
                 <a href="">start</a>
             </section>
 
@@ -314,6 +315,16 @@
     </div>
 </div>
 
+<div id="klick">
+    <div id="klick_wrap">
+        <div id="klick_holder"></div>
+        <div id="game" class="game">
+            <img id="game-image" class="game-image">
+            <canvas id="game-canvas" class="game-canvas hidden"></canvas>
+        </div>
+    </div>
+</div>
+
 <script src="lib/js/jquery-1.11.1.min.js"></script>
 <script src="lib/js/soundmanager2-jsmin.js"></script>
 <script src="lib/js/moment.min.js"></script>
@@ -322,6 +333,10 @@
 <script src="lib/js/head.min.js"></script>
 <script src="lib/js/alarm.js"></script>
 <script src="js/reveal.min.js"></script>
+<script src="lib/js/rhill-voronoi-core.min.js"></script>
+<script src="lib/js/close-pixelate.js"></script>
+<script src="lib/js/underscore-min.js"></script>
+<script src="lib/js/voronoi.js"></script>
 
 <script>
 
@@ -395,6 +410,283 @@
             PP.Timer.stop();
         });
 
+
+        var holder = document.getElementById('klick_holder'),
+                settingsform = document.getElementById('settingsform'),
+                game_canvas = document.getElementById('game-canvas'),
+                game_image = document.getElementById('game-image');
+
+        console.debug(holder);
+
+        var IMAGE_NEXT = 0,
+                TILES_NEXT = 1,
+                TILES_ALL = 2;
+
+        var files = [],
+                current_image = 0,
+                delay = 2000,
+                timer = null,
+                random_cells;
+
+        var number_of_parts = 15,
+                current_part = number_of_parts;
+
+        var reader = new FileReader(),
+                img = new Image();
+
+        reader.onload = function (event) {
+            // console.log(event.target);
+            img.src = event.target.result;
+            game_image.classList.remove('limit-height');
+        };
+
+        img.onload = function (event) {
+            if (img.height > document.documentElement.clientHeight) {
+                game_image.classList.add('limit-height');
+            } else {
+                var space = (document.documentElement.clientHeight - img.height) / 2;
+                game_image.style.top = space + 'px';
+            }
+
+            game_image.src = this.src;
+
+        };
+
+        game_image.onload = function () {
+            var dimension = [game_image.offsetWidth, game_image.offsetHeight];
+            console.log(dimension);
+
+            // to fix problems with same width rendered differently on different elements
+            // better give the canvas 1 pixel more
+            dimension[0]++;
+
+            game_canvas.width = dimension[0];
+            game_canvas.height = dimension[1];
+            game_canvas.style.top = game_image.offsetTop + 'px';
+            game_canvas.style.left = game_image.offsetLeft + 'px';
+
+
+            VoronoiRenderer.init(game_canvas, number_of_parts, game_canvas.width, game_canvas.height);
+            random_cells = [];
+
+            for (var i = 0; i < number_of_parts; i++) {
+                random_cells.push(i);
+            }
+            shuffle(random_cells);
+            //holder.dispatchEvent(onImageNext);
+            step(number_of_parts);
+        };
+
+        holder.ondragover = function () {
+            this.className = 'hover';
+            return false;
+        };
+        holder.ondragend = function () {
+            this.className = '';
+            return false;
+        };
+        holder.ondrop = function (e) {
+            this.className = '';
+            e.preventDefault();
+
+            files = e.dataTransfer.files;
+
+            //settingsform.addEventListener('input', numberOfParts_on_input);
+            // and for IE 11
+
+            //settingsform.addEventListener('submit', evaluate_settings_form);
+            game();
+            return false;
+        };
+
+
+        var onTilesAll = new CustomEvent("onTilesAll", {}),
+                onImageNext = new CustomEvent("onImageNext", {}),
+                onTilesNext = new CustomEvent("onTilesNext", {});
+
+        holder.addEventListener('onTilesAll', function(e) {
+            console.info("alle Teile aufdecken");
+
+            window.clearInterval(timer);
+
+            step(TILES_ALL);
+        });
+
+        holder.addEventListener('onImageNext', function(e) {
+            console.info("nächstes Bild");
+
+            window.clearInterval(timer);
+
+            step(IMAGE_NEXT);
+
+            timer = window.setInterval(function () {
+                console.info("delay dispatch onTilesNext");
+                holder.dispatchEvent(onTilesNext);
+            }, delay);
+
+        });
+
+        holder.addEventListener('onTilesNext', function(e) {
+            console.info("nächstes Teil");
+            step(TILES_NEXT);
+        });
+
+
+
+        function numberOfParts_on_input(e) {
+            document.getElementById('numberOfPartsOutput').innerHTML = document.getElementById('numberOfParts').value;
+        }
+
+        function evaluate_settings_form(e) {
+            e.preventDefault();
+            number_of_parts = document.getElementById('numberOfParts').value;
+            document.getElementById('header').classList.add('hidden');
+            document.getElementById('jumbotron').classList.add('hidden');
+            document.getElementById('container').className = 'container-fluid';
+            game_canvas.classList.remove('hidden');
+            game_image.classList.remove('hidden');
+            game();
+            return false;
+        }
+
+        function game() {
+
+//            document.getElementById('start-button').disabled = true;
+
+            // to hide everything
+            game_canvas.style.top = '0';
+            game_canvas.style.left = '0';
+            game_canvas.width = document.documentElement.clientWidth;
+            game_canvas.height = document.documentElement.clientHeight;
+
+            var objContext = game_canvas.getContext('2d');
+            objContext.fillStyle = "black";
+            objContext.fillRect(0, 0, game_canvas.width, game_canvas.height);
+
+            game_image.src = '';
+            document.getElementById('game').classList.remove('hidden');
+            game_image.style.top = '0';
+            game_canvas.classList.remove('hidden');
+            // document.getElementById('game').height = document.documentElement.clientHeight;
+
+            console.log(files[current_image]);
+            reader.readAsDataURL(files[current_image]);
+        }
+
+        function step(n) {
+
+            if(n > number_of_parts) {
+                n = 0;
+                current_part = number_of_parts;
+            }
+
+            if (n === 0) {
+                current_image++;
+                if (current_image >= files.length) {
+                    // reset everything
+                    current_image = 0;
+                    window.clearInterval(timer);
+                    game_canvas.classList.add('hidden');
+                    game_image.classList.add('hidden');
+                    document.getElementsByTagName("body")[0].style.backgroundColor = 'white';
+                    document.getElementById('start-button').disabled = false;
+                    document.onkeypress = null;
+                    document.getElementById('header').classList.remove('hidden');
+                    document.getElementById('jumbotron').classList.remove('hidden');
+                    document.getElementById('container').className = 'container';
+                    window.location.reload();
+                } else {
+                    game();
+                }
+            } else {
+                var ctx = game_canvas.getContext('2d');
+                ctx.clearRect(0, 0, game_canvas.width, game_canvas.height);
+
+                if(n === TILES_NEXT){
+                    random_cells.pop();
+                }
+
+                if(n === TILES_ALL){
+                    random_cells.length = 0;
+                }
+
+                for (var i = 0; i <= random_cells.length; i++) {
+                    VoronoiRenderer.renderCell(random_cells[i], 'black', 'black');
+                }
+            }
+        }
+
+
+/*
+        document.onkeypress = function (e) {
+
+            console.log(e.keyCode);
+
+            switch(e.keyCode) {
+                case 32:
+                    console.log("Space Key");
+                    holder.dispatchEvent(onTilesAll);
+                    break;
+                case 13:
+                    console.log("Return Key");
+                    holder.dispatchEvent(onImageNext);
+                    break;
+                case 43:
+                    console.log("Plus Key");
+                    holder.dispatchEvent(onTilesNext);
+                    break;
+                case 45:
+                    console.log("Minus Key");
+                    step(2);
+                    break;
+            }
+        };
+*/
+//  32 - space
+//  13 - return
+//  43 - +
+//  45 - -
+
+
+
+
+        function shuffle(array) {
+            var currentIndex = array.length,
+                    temporaryValue, randomIndex;
+
+            // While there remain elements to shuffle...
+            while (0 !== currentIndex) {
+
+                // Pick a remaining element...
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex -= 1;
+
+                // And swap it with the current element.
+                temporaryValue = array[currentIndex];
+                array[currentIndex] = array[randomIndex];
+                array[randomIndex] = temporaryValue;
+            }
+
+            return array;
+        }
+
+    });
+
+    Reveal.configure({
+        keyboard: {
+            32: function() {
+                holder.dispatchEvent(onTilesAll);
+            },
+            13 : function() {
+                holder.dispatchEvent(onImageNext);
+            },
+            43 : function() {
+                holder.dispatchEvent(onTilesNext);
+            },
+            45 : function() {
+                step(2);
+            }
+        }
     });
 
     Reveal.addEventListener('slidechanged', function (event) {

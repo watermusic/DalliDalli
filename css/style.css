@@ -95,3 +95,35 @@
     left:0;
     z-index:10;
 }
+
+#klick {
+    position: absolute;
+    left: 0;
+    top: 0;
+    /* display: none; */
+    width: 100%;
+    height: 100%;
+    /* background-color: #3b5998; */
+    z-index: 1;
+}
+
+#klick_wrap {
+    margin: 0 auto;
+    width: 800px;
+}
+
+#klick_holder {
+    width: 50px;
+    height: 50px;
+    background-color: darkslategrey;
+}
+
+.hidden { display:none; }
+
+.game-canvas {
+    position: absolute;
+    z-index: 2;
+}
+.limit-height {
+    max-height: 100%;
+}
