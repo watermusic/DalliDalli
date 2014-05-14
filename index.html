@@ -363,16 +363,22 @@
         ]
     });
 
-    var timer = null, indices = {}, snd_ticktac = null, snd_theme = null;
+    var timer = null, indices = {}, snd_ticktac = null, snd_theme = null, snd_alarm = null;
 
     soundManager.setup({
 
         onready: function() {
             snd_ticktac = soundManager.createSound({
-                url: 'lib/audio/ticktac.ogg'
+                url: 'lib/audio/ticktac.ogg',
+                autoLoad: true
             });
             snd_theme = soundManager.createSound({
-                url: 'lib/audio/theme.m4a'
+                url: 'lib/audio/theme.m4a',
+                autoLoad: true
+            });
+            snd_alarm = soundManager.createSound({
+                url: 'lib/audio/alarm_buzzer.ogg',
+                autoLoad: true
             });
         }
 
