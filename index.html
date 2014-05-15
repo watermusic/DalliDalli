@@ -171,20 +171,55 @@
             <section>
                 <h3>Beispiel</h3>
                 <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
 
-                <a href="">start</a>
+                <a href="javascript:startClick(false);">start</a>
             </section>
 
             <section>
                 <h2>Team Angelika</h2>
                 <p>&nbsp;</p>
-                <a href="">start</a>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+
+                <a href="javascript:startClick(true);">start</a>
             </section>
 
             <section>
                 <h2>Team Helmut</h2>
                 <p>&nbsp;</p>
-                <a href="">start</a>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+
+                <a href="javascript:startClick(true);">start</a>
             </section>
 
         </section>
@@ -378,7 +413,15 @@
         ]
     });
 
-    var timer = null, indices = {}, snd_ticktac = null, snd_theme = null, snd_alarm = null;
+    var timer = null,
+        indices = {},
+        snd_ticktac = null,
+        snd_theme = null,
+        startClick = null,
+        snd_alarm = null,
+        onTilesAll = null,
+        onImageNext = null,
+        onTilesNext = null;
 
     soundManager.setup({
 
@@ -412,11 +455,9 @@
 
 
         var holder = document.getElementById('klick_holder'),
-                settingsform = document.getElementById('settingsform'),
-                game_canvas = document.getElementById('game-canvas'),
-                game_image = document.getElementById('game-image');
-
-        console.debug(holder);
+            settingsform = document.getElementById('settingsform'),
+            game_canvas = document.getElementById('game-canvas'),
+            game_image = document.getElementById('game-image');
 
         var IMAGE_NEXT = 0,
                 TILES_NEXT = 1,
@@ -424,7 +465,7 @@
 
         var files = [],
                 current_image = 0,
-                delay = 2000,
+                delay = 1200,
                 timer = null,
                 random_cells;
 
@@ -499,24 +540,25 @@
             return false;
         };
 
-
-        var onTilesAll = new CustomEvent("onTilesAll", {}),
-                onImageNext = new CustomEvent("onImageNext", {}),
-                onTilesNext = new CustomEvent("onTilesNext", {});
+        onTilesAll = new CustomEvent("onTilesAll", {});
+        onImageNext = new CustomEvent("onImageNext", {});
+        onTilesNext = new CustomEvent("onTilesNext", {});
 
         holder.addEventListener('onTilesAll', function(e) {
+
+            if(current_image === 0) {
+                return;
+            }
+
             console.info("alle Teile aufdecken");
-
             window.clearInterval(timer);
-
             step(TILES_ALL);
         });
 
         holder.addEventListener('onImageNext', function(e) {
+
             console.info("nächstes Bild");
-
             window.clearInterval(timer);
-
             step(IMAGE_NEXT);
 
             timer = window.setInterval(function () {
@@ -527,6 +569,11 @@
         });
 
         holder.addEventListener('onTilesNext', function(e) {
+
+            if(current_image === 0) {
+                return;
+            }
+
             console.info("nächstes Teil");
             step(TILES_NEXT);
         });
@@ -583,18 +630,13 @@
             if (n === 0) {
                 current_image++;
                 if (current_image >= files.length) {
+                    console.log("queue end");
                     // reset everything
                     current_image = 0;
                     window.clearInterval(timer);
                     game_canvas.classList.add('hidden');
                     game_image.classList.add('hidden');
-                    document.getElementsByTagName("body")[0].style.backgroundColor = 'white';
-                    document.getElementById('start-button').disabled = false;
                     document.onkeypress = null;
-                    document.getElementById('header').classList.remove('hidden');
-                    document.getElementById('jumbotron').classList.remove('hidden');
-                    document.getElementById('container').className = 'container';
-                    window.location.reload();
                 } else {
                     game();
                 }
@@ -617,38 +659,35 @@
         }
 
 
-/*
+
         document.onkeypress = function (e) {
 
             console.log(e.keyCode);
 
             switch(e.keyCode) {
-                case 32:
-                    console.log("Space Key");
-                    holder.dispatchEvent(onTilesAll);
-                    break;
-                case 13:
-                    console.log("Return Key");
-                    holder.dispatchEvent(onImageNext);
-                    break;
                 case 43:
-                    console.log("Plus Key");
+                    console.log("+ Key");
                     holder.dispatchEvent(onTilesNext);
                     break;
                 case 45:
-                    console.log("Minus Key");
+                    console.log("- Key");
                     step(2);
+                    break;
+                case 120:
+                    console.log("x Key");
+                    holder.dispatchEvent(onTilesAll);
+                    break;
+                case 117:
+                    console.log("u Key");
+                    holder.dispatchEvent(onImageNext);
                     break;
             }
         };
-*/
+
 //  32 - space
 //  13 - return
 //  43 - +
 //  45 - -
-
-
-
 
         function shuffle(array) {
             var currentIndex = array.length,
@@ -670,20 +709,32 @@
             return array;
         }
 
+        startClick = function(isTimer) {
+            holder.dispatchEvent(onImageNext);
+            if(isTimer) {
+                PP.Timer.start(45);
+            }
+        };
+
     });
+
 
     Reveal.configure({
         keyboard: {
             32: function() {
                 holder.dispatchEvent(onTilesAll);
+                console.log("Space key clicked");
             },
             13 : function() {
                 holder.dispatchEvent(onImageNext);
+                console.log("Return key clicked");
             },
             43 : function() {
                 holder.dispatchEvent(onTilesNext);
+                console.log("+ key clicked");
             },
             45 : function() {
+                console.log("-g key clicked");
                 step(2);
             }
         }
