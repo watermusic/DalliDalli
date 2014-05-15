@@ -168,7 +168,7 @@
                 <h2>Spiel - Dalli-Klick</h2>
             </section>
 
-            <section>
+            <section data-state="somestate">
                 <h3>Beispiel</h3>
                 <p>&nbsp;</p>
                 <p>&nbsp;</p>
@@ -185,6 +185,15 @@
 
                 <a href="javascript:startClick(false);">start</a>
             </section>
+
+            <section>
+                <img src="lib/images/klick/beispiel/image-01.jpg" class="img-hide">
+            </section>
+            <section>
+                <img src="lib/images/klick/angelika/image-01.jpg" class="img-hide">
+            </section>
+
+
 
             <section>
                 <h2>Team Angelika</h2>
@@ -350,15 +359,8 @@
     </div>
 </div>
 
-<div id="klick">
-    <div id="klick_wrap">
-        <div id="klick_holder"></div>
-        <div id="game" class="game">
-            <img id="game-image" class="game-image">
-            <canvas id="game-canvas" class="game-canvas hidden"></canvas>
-        </div>
-    </div>
-</div>
+<canvas id="game-canvas" class="game-canvas hidden"></canvas>
+
 
 <script src="lib/js/jquery-1.11.1.min.js"></script>
 <script src="lib/js/soundmanager2-jsmin.js"></script>
@@ -418,6 +420,7 @@
         snd_ticktac = null,
         snd_theme = null,
         startClick = null,
+        startGame = null,
         snd_alarm = null,
         onTilesAll = null,
         onImageNext = null,
@@ -464,6 +467,7 @@
                 TILES_ALL = 2;
 
         var files = [],
+                _image = null,
                 current_image = 0,
                 delay = 1200,
                 timer = null,
@@ -472,153 +476,6 @@
         var number_of_parts = 15,
                 current_part = number_of_parts;
 
-        var reader = new FileReader(),
-                img = new Image();
-
-        reader.onload = function (event) {
-            // console.log(event.target);
-            img.src = event.target.result;
-            game_image.classList.remove('limit-height');
-        };
-
-        img.onload = function (event) {
-            if (img.height > document.documentElement.clientHeight) {
-                game_image.classList.add('limit-height');
-            } else {
-                var space = (document.documentElement.clientHeight - img.height) / 2;
-                game_image.style.top = space + 'px';
-            }
-
-            game_image.src = this.src;
-
-        };
-
-        game_image.onload = function () {
-            var dimension = [game_image.offsetWidth, game_image.offsetHeight];
-            console.log(dimension);
-
-            // to fix problems with same width rendered differently on different elements
-            // better give the canvas 1 pixel more
-            dimension[0]++;
-
-            game_canvas.width = dimension[0];
-            game_canvas.height = dimension[1];
-            game_canvas.style.top = game_image.offsetTop + 'px';
-            game_canvas.style.left = game_image.offsetLeft + 'px';
-
-
-            VoronoiRenderer.init(game_canvas, number_of_parts, game_canvas.width, game_canvas.height);
-            random_cells = [];
-
-            for (var i = 0; i < number_of_parts; i++) {
-                random_cells.push(i);
-            }
-            shuffle(random_cells);
-            //holder.dispatchEvent(onImageNext);
-            step(number_of_parts);
-        };
-
-        holder.ondragover = function () {
-            this.className = 'hover';
-            return false;
-        };
-        holder.ondragend = function () {
-            this.className = '';
-            return false;
-        };
-        holder.ondrop = function (e) {
-            this.className = '';
-            e.preventDefault();
-
-            files = e.dataTransfer.files;
-
-            //settingsform.addEventListener('input', numberOfParts_on_input);
-            // and for IE 11
-
-            //settingsform.addEventListener('submit', evaluate_settings_form);
-            game();
-            return false;
-        };
-
-        onTilesAll = new CustomEvent("onTilesAll", {});
-        onImageNext = new CustomEvent("onImageNext", {});
-        onTilesNext = new CustomEvent("onTilesNext", {});
-
-        holder.addEventListener('onTilesAll', function(e) {
-
-            if(current_image === 0) {
-                return;
-            }
-
-            console.info("alle Teile aufdecken");
-            window.clearInterval(timer);
-            step(TILES_ALL);
-        });
-
-        holder.addEventListener('onImageNext', function(e) {
-
-            console.info("nächstes Bild");
-            window.clearInterval(timer);
-            step(IMAGE_NEXT);
-
-            timer = window.setInterval(function () {
-                console.info("delay dispatch onTilesNext");
-                holder.dispatchEvent(onTilesNext);
-            }, delay);
-
-        });
-
-        holder.addEventListener('onTilesNext', function(e) {
-
-            if(current_image === 0) {
-                return;
-            }
-
-            console.info("nächstes Teil");
-            step(TILES_NEXT);
-        });
-
-
-
-        function numberOfParts_on_input(e) {
-            document.getElementById('numberOfPartsOutput').innerHTML = document.getElementById('numberOfParts').value;
-        }
-
-        function evaluate_settings_form(e) {
-            e.preventDefault();
-            number_of_parts = document.getElementById('numberOfParts').value;
-            document.getElementById('header').classList.add('hidden');
-            document.getElementById('jumbotron').classList.add('hidden');
-            document.getElementById('container').className = 'container-fluid';
-            game_canvas.classList.remove('hidden');
-            game_image.classList.remove('hidden');
-            game();
-            return false;
-        }
-
-        function game() {
-
-//            document.getElementById('start-button').disabled = true;
-
-            // to hide everything
-            game_canvas.style.top = '0';
-            game_canvas.style.left = '0';
-            game_canvas.width = document.documentElement.clientWidth;
-            game_canvas.height = document.documentElement.clientHeight;
-
-            var objContext = game_canvas.getContext('2d');
-            objContext.fillStyle = "black";
-            objContext.fillRect(0, 0, game_canvas.width, game_canvas.height);
-
-            game_image.src = '';
-            document.getElementById('game').classList.remove('hidden');
-            game_image.style.top = '0';
-            game_canvas.classList.remove('hidden');
-            // document.getElementById('game').height = document.documentElement.clientHeight;
-
-            console.log(files[current_image]);
-            reader.readAsDataURL(files[current_image]);
-        }
 
         function step(n) {
 
@@ -644,6 +501,8 @@
                 var ctx = game_canvas.getContext('2d');
                 ctx.clearRect(0, 0, game_canvas.width, game_canvas.height);
 
+                //_img.removeClass("img-hide");
+
                 if(n === TILES_NEXT){
                     random_cells.pop();
                 }
@@ -655,39 +514,12 @@
                 for (var i = 0; i <= random_cells.length; i++) {
                     VoronoiRenderer.renderCell(random_cells[i], 'black', 'black');
                 }
+
+                _image.removeClass("img-hide");
+
             }
         }
 
-
-
-        document.onkeypress = function (e) {
-
-            console.log(e.keyCode);
-
-            switch(e.keyCode) {
-                case 43:
-                    console.log("+ Key");
-                    holder.dispatchEvent(onTilesNext);
-                    break;
-                case 45:
-                    console.log("- Key");
-                    step(2);
-                    break;
-                case 120:
-                    console.log("x Key");
-                    holder.dispatchEvent(onTilesAll);
-                    break;
-                case 117:
-                    console.log("u Key");
-                    holder.dispatchEvent(onImageNext);
-                    break;
-            }
-        };
-
-//  32 - space
-//  13 - return
-//  43 - +
-//  45 - -
 
         function shuffle(array) {
             var currentIndex = array.length,
@@ -710,41 +542,85 @@
         }
 
         startClick = function(isTimer) {
-            holder.dispatchEvent(onImageNext);
             if(isTimer) {
                 PP.Timer.start(45);
             }
         };
 
-    });
+        startGame = function(img) {
 
+            window.clearInterval(timer);
 
-    Reveal.configure({
-        keyboard: {
-            32: function() {
-                holder.dispatchEvent(onTilesAll);
-                console.log("Space key clicked");
-            },
-            13 : function() {
-                holder.dispatchEvent(onImageNext);
-                console.log("Return key clicked");
-            },
-            43 : function() {
-                holder.dispatchEvent(onTilesNext);
-                console.log("+ key clicked");
-            },
-            45 : function() {
-                console.log("-g key clicked");
-                step(2);
+            var _canvas = $("#game-canvas");
+            _canvas.hide();
+
+            var _img = $(img);
+
+            _image = _img;
+
+            var _coords = {};
+            var zo = $("div.slides").css("zoom");
+
+            _coords.width = _img.outerWidth();
+            _coords.height = _img.outerHeight();
+
+            _coords = _.object(_.map(_coords, function (num, key) {
+                return [key, num * zo];
+            }));
+
+            _coords.left = _img.get(0).x + 'px';
+            _coords.top = _img.get(0).y; + 'px'
+
+            _canvas.width(_coords.width)
+                    .offset(_coords)
+                    .css(_coords)
+                   .height(_coords.height);
+
+            _canvas.get(0).offsetLeft = _coords.left;
+            _canvas.get(0).offsetTop = _coords.top;
+
+            var objContext = game_canvas.getContext('2d');
+            objContext.fillStyle = "black";
+            objContext.fillRect(0, 0, game_canvas.width, game_canvas.height);
+
+            _canvas.show();
+
+            VoronoiRenderer.init(game_canvas, number_of_parts, game_canvas.width, game_canvas.height);
+            random_cells = [];
+
+            for (var i = 0; i < number_of_parts; i++) {
+                random_cells.push(i);
             }
-        }
-    });
+            shuffle(random_cells);
+            step(number_of_parts);
 
-    Reveal.addEventListener('slidechanged', function (event) {
-        //event.previousSlide, event.currentSlide, event.indexh, event.indexv
-        console.log(event);
+            timer = window.setInterval(function () {
+                console.info("delay dispatch onTilesNext");
+                step(TILES_NEXT);
+            }, delay);
 
-//                indices = Reveal.getIndices();
+            //_img.removeClass("img-hide");
+
+        };
+
+
+        Reveal.addEventListener('slidechanged', function (event) {
+            //event.previousSlide, event.currentSlide, event.indexh, event.indexv
+            console.log(event);
+
+            var _canvas = $("#game-canvas");
+            _canvas.hide();
+
+            indices = Reveal.getIndices();
+
+            if(indices.h === 4) {
+                if(event.currentSlide.children[0].tagName === "IMG") {
+                    $(event.currentSlide.children[0]).addClass("img-hide");
+                    startGame(event.currentSlide.children[0]);
+                }
+            }
+
+
 //
 //                if(indices.h === 1) {
 //                    timer = window.setInterval(function() {
@@ -756,7 +632,50 @@
 //                    }, 2000 );
 //                }
 
+
+        });
+
+
+
+
+//  32 - space
+//  13 - return
+//  43 - +
+//  45 - -
+        document.onkeypress = function (e) {
+
+            console.log(e.keyCode);
+
+            switch(e.keyCode) {
+                case 43:
+                    console.log("+ Key");
+                    step(TILES_NEXT);
+                    break;
+                case 45:
+                    console.log("- Key");
+                    step(2);
+                    break;
+                case 120:
+                    console.log("x Key");
+                    console.info("alle Teile aufdecken");
+                    window.clearInterval(timer);
+                    step(TILES_ALL);
+                    break;
+                case 117:
+                    console.log("u Key");
+                    console.info("nächstes Bild");
+                    window.clearInterval(timer);
+
+                    Reveal.down();
+
+                    break;
+            }
+        };
+
     });
+
+
+
 
 
 </script>
